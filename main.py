@@ -19,9 +19,9 @@ price = st.number_input("Pris", min_value=0.0, step=0.01)
 vat_rates = {
     "Generell (25%)": 25.0,
     "Redusert (15%)": 15.0,
-    "12%": 12.0,
-    "11.11%": 11.11,
-    "6%": 6.0
+    "Redusert (12%)": 12.0,
+    "Redusert (11.11%)": 11.11,
+    "Redusert (6%)": 6.0
 }
 
 # User input for VAT rate
