@@ -9,10 +9,24 @@ def calculate_vat_inclusive(price_exclusive, vat_rate):
 st.title("MVA Kalkulator")
 st.write("Beregn priser med og uten merverdiavgift (MVA).")
 
-# User input
+# User input for price type
 price_type = st.radio("Velg pris type", ("Inkludert MVA", "Ekskludert MVA"))
+
+# User input for price
 price = st.number_input("Pris", min_value=0.0, step=0.01)
-vat_rate = st.number_input("MVA-sats (%)", min_value=0.0, step=0.1, value=25.0)
+
+# Predefined VAT rates
+vat_rates = {
+    "Generell (25%)": 25.0,
+    "Redusert (15%)": 15.0,
+    "12%": 12.0,
+    "11.11%": 11.11,
+    "6%": 6.0
+}
+
+# User input for VAT rate
+vat_rate_label = st.selectbox("Velg MVA-sats", list(vat_rates.keys()))
+vat_rate = vat_rates[vat_rate_label]
 
 # Calculate and display the results
 if price_type == "Inkludert MVA":
