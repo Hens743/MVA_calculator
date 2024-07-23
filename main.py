@@ -266,33 +266,39 @@ with st.form(key='mva_calculator'):
 if submit_button:
     if price_type == translate('price_inclusive_label'):
         result = calculate_vat(price, vat_rate, inclusive=True)
-        st.success(f"{translate('price_exclusive_label')} {result:.2f}")
+        st.success(f"{translate('price_exclusive_label')} {result:.2f} NOK")
     else:
         result = calculate_vat(price, vat_rate, inclusive=False)
-        st.success(f"{translate('price_inclusive_label')} {result:.2f}")
+        st.success(f"{translate('price_inclusive_label')} {result:.2f} NOK")
 
-# Batch Upload and Processing
-uploaded_file = st.file_uploader("Upload Excel file", type=["xlsx"])
-if uploaded_file:
-    try:
-        df = pd.read_excel(uploaded_file)
-        if 'Price' not in df.columns:
-            st.error("The uploaded file does not contain a 'Price' column.")
-        else:
-            df['Price Exclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=True))
-            df['Price Inclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=False))
-            
-            # Editable DataFrame
-            st.write("### Editable DataFrame")
-            edited_df = st.data_editor(df, use_container_width=True)
-            
-            # Save the result to an Excel file
-            result_file = "VAT_Calculations.xlsx"
-            edited_df.to_excel(result_file, index=False)
-            with open(result_file, "rb") as file:
-                st.download_button(label="Download Updated Results", data=file, file_name=result_file)
-    except Exception as e:
-        st.error(f"An error occurred while processing the file: {e}")
+# Container for Upload and Editable DataFrame
+with st.container():
+    st.header("Upload and Edit Excel File")
+
+    # File uploader
+    uploaded_file = st.file_uploader("Upload Excel file", type=["xlsx"])
+    
+    if uploaded_file:
+        try:
+            df = pd.read_excel(uploaded_file)
+            if 'Price' not in df.columns:
+                st.error("The uploaded file does not contain a 'Price' column.")
+            else:
+                # Calculate VAT values
+                df['Price Exclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=True))
+                df['Price Inclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=False))
+                
+                # Editable DataFrame
+                st.write("### Editable DataFrame")
+                edited_df = st.data_editor(df, use_container_width=True)
+                
+                # Save the result to an Excel file
+                result_file = "VAT_Calculations.xlsx"
+                edited_df.to_excel(result_file, index=False)
+                with open(result_file, "rb") as file:
+                    st.download_button(label="Download Updated Results", data=file, file_name=result_file)
+        except Exception as e:
+            st.error(f"An error occurred while processing the file: {e}")
 
 # Sidebar Information
 st.sidebar.title(translate('sidebar_title'))
@@ -309,6 +315,7 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
+
 
    
 
