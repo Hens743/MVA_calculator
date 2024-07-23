@@ -281,13 +281,16 @@ if uploaded_file:
         else:
             df['Price Exclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=True))
             df['Price Inclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=False))
-            st.write(df)
+            
+            # Editable DataFrame
+            st.write("### Editable DataFrame")
+            edited_df = st.data_editor(df, use_container_width=True)
             
             # Save the result to an Excel file
             result_file = "VAT_Calculations.xlsx"
-            df.to_excel(result_file, index=False)
+            edited_df.to_excel(result_file, index=False)
             with open(result_file, "rb") as file:
-                st.download_button(label="Download Results", data=file, file_name=result_file)
+                st.download_button(label="Download Updated Results", data=file, file_name=result_file)
     except Exception as e:
         st.error(f"An error occurred while processing the file: {e}")
 
@@ -306,6 +309,7 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
+
    
 
 
