@@ -128,7 +128,7 @@ import streamlit as st
 # Translation dictionary
 translations = {
     'title': {
-        'en': "MVA Calculator",
+        'en': "VAT Calculator",
         'no': "MVA Kalkulator",
         'es': "Calculadora de IVA",
         'fr': "Calculateur de TVA"
