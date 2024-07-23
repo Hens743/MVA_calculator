@@ -593,7 +593,7 @@ def calculate_vat(price, vat_rate, inclusive=True):
 
 # Multilingual support
 translations = {
-    'title': {'en': "VAT Calculator", 'no': "MVA Kalkulator", 'es': "Calculadora de IVA", 'fr': "Calculateur de TVA"},
+    'title': {'en': "Norwegian VAT Calculator", 'no': "Norsk MVA Kalkulator", 'es': "Calculadora de IVA Noruego", 'fr': "Calculateur de TVA Norvegienne"},
     'description': {'en': "Calculate prices with and without VAT.", 'no': "Beregn priser med og uten merverdiavgift (MVA).", 'es': "Calcula precios con y sin IVA.", 'fr': "Calculez les prix avec et sans TVA."},
     'price_type_label': {'en': "Select price type", 'no': "Velg pris type", 'es': "Seleccione tipo de precio", 'fr': "Sélectionnez le type de prix"},
     'price_label': {'en': "Price", 'no': "Pris", 'es': "Precio", 'fr': "Prix"},
@@ -805,6 +805,7 @@ with st.container():
                 # Add VAT calculation columns
                 df['Price Exclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=True)[0])
                 df['Price Inclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=False)[0])
+                df['VAT Amount'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=True)[1])
 
                 # Editable DataFrame
                 df = st.data_editor(df, use_container_width=True)
