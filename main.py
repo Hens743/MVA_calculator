@@ -137,6 +137,12 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# Ensure openpyxl is imported
+try:
+    import openpyxl
+except ImportError:
+    st.error("Please install the openpyxl library.")
+
 # Function to calculate VAT exclusive and inclusive
 def calculate_vat(price, vat_rate, inclusive=True):
     if inclusive:
@@ -172,6 +178,56 @@ translations = {
         'fr': """
             La Taxe sur la Valeur Ajoutée (TVA) est une taxe payée sur la plupart des biens et services vendus en Norvège.
             Le taux de TVA standard est de 25%, mais il existe également des taux réduits pour certains biens et services.
+        """
+    },
+    'file_structure_info': {
+        'en': """
+            ### Excel File Structure
+            The Excel file should have the following columns:
+            - **Price**: The price values you want to process (required).
+            - Any other columns can be present but won't affect calculations.
+            Example:
+            | Price | Product Name | Category  |
+            |-------|--------------|-----------|
+            | 100.00| Widget A     | Category 1|
+            | 200.50| Widget B     | Category 2|
+            | 150.75| Widget C     | Category 1|
+        """,
+        'no': """
+            ### Excel-filstruktur
+            Excel-filen skal ha følgende kolonner:
+            - **Pris**: Prisverdiene du vil behandle (påkrevd).
+            - Eventuelle andre kolonner kan være til stede, men påvirker ikke beregningene.
+            Eksempel:
+            | Pris   | Produktnavn  | Kategori   |
+            |--------|--------------|------------|
+            | 100.00 | Widget A     | Kategori 1 |
+            | 200.50 | Widget B     | Kategori 2 |
+            | 150.75 | Widget C     | Kategori 1 |
+        """,
+        'es': """
+            ### Estructura del archivo Excel
+            El archivo Excel debe tener las siguientes columnas:
+            - **Precio**: Los valores de precio que desea procesar (requerido).
+            - Cualquier otra columna puede estar presente pero no afectará los cálculos.
+            Ejemplo:
+            | Precio | Nombre del producto | Categoría  |
+            |--------|---------------------|------------|
+            | 100.00 | Widget A            | Categoría 1|
+            | 200.50 | Widget B            | Categoría 2|
+            | 150.75 | Widget C            | Categoría 1|
+        """,
+        'fr': """
+            ### Structure du fichier Excel
+            Le fichier Excel doit avoir les colonnes suivantes :
+            - **Prix** : Les valeurs de prix que vous souhaitez traiter (requis).
+            - Toutes les autres colonnes peuvent être présentes mais n'affecteront pas les calculs.
+            Exemple :
+            | Prix   | Nom du produit | Catégorie   |
+            |--------|----------------|-------------|
+            | 100.00 | Widget A       | Catégorie 1 |
+            | 200.50 | Widget B       | Catégorie 2 |
+            | 150.75 | Widget C       | Catégorie 1 |
         """
     }
 }
@@ -218,12 +274,22 @@ if submit_button:
 # Batch Upload and Processing
 uploaded_file = st.file_uploader("Upload Excel file", type=["xlsx"])
 if uploaded_file:
-    df = pd.read_excel(uploaded_file)
-    df['Price Exclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=True))
-    df['Price Inclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=False))
-    st.write(df)
-    df.to_excel("VAT_Calculations.xlsx", index=False)
-    st.download_button("Download Results", data="VAT_Calculations.xlsx", file_name="VAT_Calculations.xlsx")
+    try:
+        df = pd.read_excel(uploaded_file)
+        if 'Price' not in df.columns:
+            st.error("The uploaded file does not contain a 'Price' column.")
+        else:
+            df['Price Exclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=True))
+            df['Price Inclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=False))
+            st.write(df)
+            
+            # Save the result to an Excel file
+            result_file = "VAT_Calculations.xlsx"
+            df.to_excel(result_file, index=False)
+            with open(result_file, "rb") as file:
+                st.download_button(label="Download Results", data=file, file_name=result_file)
+    except Exception as e:
+        st.error(f"An error occurred while processing the file: {e}")
 
 # Data Visualization
 if submit_button:
@@ -235,6 +301,7 @@ if submit_button:
 # Sidebar Information
 st.sidebar.title(translate('sidebar_title'))
 st.sidebar.info(translate('sidebar_info'))
+st.sidebar.write(translate('file_structure_info'))
 
 st.markdown("""
     <style>
