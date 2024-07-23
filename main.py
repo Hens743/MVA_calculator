@@ -335,7 +335,7 @@ def calculate_vat(price, vat_rate, inclusive=True):
 
 # Multilingual support
 translations = {
-    'title': {'en': "MVA Calculator", 'no': "MVA Kalkulator", 'es': "Calculadora de IVA", 'fr': "Calculateur de TVA"},
+    'title': {'en': "VAT Calculator", 'no': "MVA Kalkulator", 'es': "Calculadora de IVA", 'fr': "Calculateur de TVA"},
     'description': {'en': "Calculate prices with and without VAT.", 'no': "Beregn priser med og uten merverdiavgift (MVA).", 'es': "Calcula precios con y sin IVA.", 'fr': "Calculez les prix avec et sans TVA."},
     'price_type_label': {'en': "Select price type", 'no': "Velg pris type", 'es': "Seleccione tipo de precio", 'fr': "Sélectionnez le type de prix"},
     'price_label': {'en': "Price", 'no': "Pris", 'es': "Precio", 'fr': "Prix"},
@@ -525,10 +525,10 @@ with st.form(key='mva_calculator'):
 if submit_button:
     if price_type == translate('price_inclusive_label'):
         result = calculate_vat(price, vat_rate, inclusive=True)
-        st.success(f"{translate('price_exclusive_label')} {result:.2f} NOK")
+        st.success(f"{translate('price_exclusive_label')} {result:.2f}")
     else:
         result = calculate_vat(price, vat_rate, inclusive=False)
-        st.success(f"{translate('price_inclusive_label')} {result:.2f} NOK")
+        st.success(f"{translate('price_inclusive_label')} {result:.2f}")
 
 # Batch Upload and Processing
 with st.container():
@@ -546,7 +546,7 @@ with st.container():
                 df['Price Inclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=False))
 
                 # Editable DataFrame
-                df = st.experimental_data_editor(df, use_container_width=True)
+                df = st.data_editor(df, use_container_width=True)
                 
                 # Save the result to an Excel file
                 result_file = "VAT_Calculations.xlsx"
