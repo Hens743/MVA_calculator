@@ -188,7 +188,6 @@ translations = {
             - Any other columns can be present but won't affect calculations.
             Example:
             | Price | Product Name | Category  |
-            |-------|--------------|-----------|
             | 100.00| Widget A     | Category 1|
             | 200.50| Widget B     | Category 2|
             | 150.75| Widget C     | Category 1|
@@ -200,7 +199,6 @@ translations = {
             - Eventuelle andre kolonner kan være til stede, men påvirker ikke beregningene.
             Eksempel:
             | Pris   | Produktnavn  | Kategori   |
-            |--------|--------------|------------|
             | 100.00 | Widget A     | Kategori 1 |
             | 200.50 | Widget B     | Kategori 2 |
             | 150.75 | Widget C     | Kategori 1 |
@@ -212,7 +210,6 @@ translations = {
             - Cualquier otra columna puede estar presente pero no afectará los cálculos.
             Ejemplo:
             | Precio | Nombre del producto | Categoría  |
-            |--------|---------------------|------------|
             | 100.00 | Widget A            | Categoría 1|
             | 200.50 | Widget B            | Categoría 2|
             | 150.75 | Widget C            | Categoría 1|
@@ -224,7 +221,6 @@ translations = {
             - Toutes les autres colonnes peuvent être présentes mais n'affecteront pas les calculs.
             Exemple :
             | Prix   | Nom du produit | Catégorie   |
-            |--------|----------------|-------------|
             | 100.00 | Widget A       | Catégorie 1 |
             | 200.50 | Widget B       | Catégorie 2 |
             | 150.75 | Widget C       | Catégorie 1 |
