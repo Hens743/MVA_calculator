@@ -132,6 +132,8 @@
 #     }
 #     </style>
 #     """, unsafe_allow_html=True)
+
+
 import streamlit as st
 import pandas as pd
 
@@ -281,13 +283,13 @@ if uploaded_file:
             edited_df = df.copy()
             st.write("### Editable DataFrame")
             
-            # Create a selectbox for row selection
+            # Create a list of indices for selection
             selected_index = st.selectbox("Select row to edit", df.index)
             st.write(f"Editing row: {selected_index}")
 
-            # Get values for the selected row
-            row = df.loc[selected_index]
             with st.form(key='edit_row'):
+                # Get values for the selected row
+                row = df.loc[selected_index]
                 new_price = st.number_input("Price", value=row['Price'], format="%.2f")
                 new_product_name = st.text_input("Product Name", value=row.get('Product Name', ''))
                 new_category = st.text_input("Category", value=row.get('Category', ''))
