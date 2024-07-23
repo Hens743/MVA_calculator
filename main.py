@@ -193,7 +193,18 @@ st.write(translate('description'))
 with st.form(key='mva_calculator'):
     price_type = st.radio(translate('price_type_label'), (translate('price_inclusive_label'), translate('price_exclusive_label')))
     price = st.number_input(translate('price_label'), min_value=0.0, step=0.01, format="%.2f")
-    vat_rate = st.number_input("VAT Rate (%)", min_value=0.0, max_value=100.0, step=0.01)
+
+    vat_rates = {
+        "Generell (25%)": 25.0,
+        "Redusert (15%)": 15.0,
+        "Redusert (12%)": 12.0,
+        "Redusert (11.11%)": 11.11,
+        "Redusert (6%)": 6.0
+    }
+
+    vat_rate_label = st.selectbox(translate('vat_rate_label'), list(vat_rates.keys()))
+    vat_rate = vat_rates[vat_rate_label]
+
     submit_button = st.form_submit_button(label=translate('calculate_button'))
 
 if submit_button:
@@ -205,14 +216,14 @@ if submit_button:
         st.success(f"{translate('price_inclusive_label')} {result:.2f} NOK")
 
 # Batch Upload and Processing
-uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
+uploaded_file = st.file_uploader("Upload Excel file", type=["xlsx"])
 if uploaded_file:
-    df = pd.read_csv(uploaded_file)
+    df = pd.read_excel(uploaded_file)
     df['Price Exclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=True))
     df['Price Inclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=False))
     st.write(df)
-    df.to_csv("VAT_Calculations.csv", index=False)
-    st.download_button("Download Results", data="VAT_Calculations.csv", file_name="VAT_Calculations.csv")
+    df.to_excel("VAT_Calculations.xlsx", index=False)
+    st.download_button("Download Results", data="VAT_Calculations.xlsx", file_name="VAT_Calculations.xlsx")
 
 # Data Visualization
 if submit_button:
@@ -235,5 +246,6 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
+
 
 
