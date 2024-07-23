@@ -132,10 +132,8 @@
 #     }
 #     </style>
 #     """, unsafe_allow_html=True)
-
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 
 # Ensure openpyxl is imported
 try:
@@ -152,7 +150,7 @@ def calculate_vat(price, vat_rate, inclusive=True):
 
 # Multilingual support
 translations = {
-    'title': {'en': "VAT Calculator", 'no': "MVA Kalkulator", 'es': "Calculadora de IVA", 'fr': "Calculateur de TVA"},
+    'title': {'en': "MVA Calculator", 'no': "MVA Kalkulator", 'es': "Calculadora de IVA", 'fr': "Calculateur de TVA"},
     'description': {'en': "Calculate prices with and without VAT.", 'no': "Beregn priser med og uten merverdiavgift (MVA).", 'es': "Calcula precios con y sin IVA.", 'fr': "Calculez les prix avec et sans TVA."},
     'price_type_label': {'en': "Select price type", 'no': "Velg pris type", 'es': "Seleccione tipo de precio", 'fr': "Sélectionnez le type de prix"},
     'price_label': {'en': "Price", 'no': "Pris", 'es': "Precio", 'fr': "Prix"},
@@ -188,6 +186,7 @@ translations = {
             - Any other columns can be present but won't affect calculations.
             Example:
             | Price | Product Name | Category  |
+            |-------|--------------|-----------|
             | 100.00| Widget A     | Category 1|
             | 200.50| Widget B     | Category 2|
             | 150.75| Widget C     | Category 1|
@@ -199,6 +198,7 @@ translations = {
             - Eventuelle andre kolonner kan være til stede, men påvirker ikke beregningene.
             Eksempel:
             | Pris   | Produktnavn  | Kategori   |
+            |--------|--------------|------------|
             | 100.00 | Widget A     | Kategori 1 |
             | 200.50 | Widget B     | Kategori 2 |
             | 150.75 | Widget C     | Kategori 1 |
@@ -210,6 +210,7 @@ translations = {
             - Cualquier otra columna puede estar presente pero no afectará los cálculos.
             Ejemplo:
             | Precio | Nombre del producto | Categoría  |
+            |--------|---------------------|------------|
             | 100.00 | Widget A            | Categoría 1|
             | 200.50 | Widget B            | Categoría 2|
             | 150.75 | Widget C            | Categoría 1|
@@ -221,6 +222,7 @@ translations = {
             - Toutes les autres colonnes peuvent être présentes mais n'affecteront pas les calculs.
             Exemple :
             | Prix   | Nom du produit | Catégorie   |
+            |--------|----------------|-------------|
             | 100.00 | Widget A       | Catégorie 1 |
             | 200.50 | Widget B       | Catégorie 2 |
             | 150.75 | Widget C       | Catégorie 1 |
@@ -275,40 +277,42 @@ if uploaded_file:
         if 'Price' not in df.columns:
             st.error("The uploaded file does not contain a 'Price' column.")
         else:
-            df['Price Exclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=True))
-            df['Price Inclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=False))
-            st.write(df)
+            # Display editable DataFrame
+            edited_df = df.copy()
+            st.write("### Editable DataFrame")
             
+            # Create a selectbox for row selection
+            selected_index = st.selectbox("Select row to edit", df.index)
+            st.write(f"Editing row: {selected_index}")
+
+            # Get values for the selected row
+            row = df.loc[selected_index]
+            with st.form(key='edit_row'):
+                new_price = st.number_input("Price", value=row['Price'], format="%.2f")
+                new_product_name = st.text_input("Product Name", value=row.get('Product Name', ''))
+                new_category = st.text_input("Category", value=row.get('Category', ''))
+
+                submit_edit = st.form_submit_button("Update Row")
+
+                if submit_edit:
+                    # Update the DataFrame
+                    edited_df.loc[selected_index] = [new_price, new_product_name, new_category]
+                    st.write("### Updated DataFrame")
+                    st.write(edited_df)
+
             # Save the result to an Excel file
             result_file = "VAT_Calculations.xlsx"
-            df.to_excel(result_file, index=False)
+            edited_df.to_excel(result_file, index=False)
             with open(result_file, "rb") as file:
-                st.download_button(label="Download Results", data=file, file_name=result_file)
+                st.download_button(label="Download Updated Results", data=file, file_name=result_file)
     except Exception as e:
         st.error(f"An error occurred while processing the file: {e}")
-
-# Data Visualization
-if submit_button:
-    st.write("## VAT Calculation Breakdown")
-    fig, ax = plt.subplots()
-    ax.bar(['Original Price', 'Price Exclusive', 'Price Inclusive'], [price, result, calculate_vat(price, vat_rate, inclusive=False) if price_type == translate('price_exclusive_label') else calculate_vat(price, vat_rate, inclusive=True)])
-    st.pyplot(fig)
 
 # Sidebar Information
 st.sidebar.title(translate('sidebar_title'))
 st.sidebar.info(translate('sidebar_info'))
 st.sidebar.write(translate('file_structure_info'))
 
-st.markdown("""
-    <style>
-    .reportview-container {
-        background: #f0f2f6;
-    }
-    .sidebar .sidebar-content {
-        background: #e0e2e6;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
 
 
