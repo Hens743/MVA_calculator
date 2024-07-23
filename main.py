@@ -136,6 +136,7 @@
 
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # Ensure openpyxl is imported
 try:
@@ -279,34 +280,15 @@ if uploaded_file:
         if 'Price' not in df.columns:
             st.error("The uploaded file does not contain a 'Price' column.")
         else:
-            # Display editable DataFrame
-            edited_df = df.copy()
-            st.write("### Editable DataFrame")
+            df['Price Exclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=True))
+            df['Price Inclusive'] = df['Price'].apply(lambda x: calculate_vat(x, vat_rate, inclusive=False))
+            st.write(df)
             
-            # Create a list of indices for selection
-            selected_index = st.selectbox("Select row to edit", df.index)
-            st.write(f"Editing row: {selected_index}")
-
-            with st.form(key='edit_row'):
-                # Get values for the selected row
-                row = df.loc[selected_index]
-                new_price = st.number_input("Price", value=row['Price'], format="%.2f")
-                new_product_name = st.text_input("Product Name", value=row.get('Product Name', ''))
-                new_category = st.text_input("Category", value=row.get('Category', ''))
-
-                submit_edit = st.form_submit_button("Update Row")
-
-                if submit_edit:
-                    # Update the DataFrame
-                    edited_df.loc[selected_index] = [new_price, new_product_name, new_category]
-                    st.write("### Updated DataFrame")
-                    st.write(edited_df)
-
             # Save the result to an Excel file
             result_file = "VAT_Calculations.xlsx"
-            edited_df.to_excel(result_file, index=False)
+            df.to_excel(result_file, index=False)
             with open(result_file, "rb") as file:
-                st.download_button(label="Download Updated Results", data=file, file_name=result_file)
+                st.download_button(label="Download Results", data=file, file_name=result_file)
     except Exception as e:
         st.error(f"An error occurred while processing the file: {e}")
 
@@ -314,6 +296,19 @@ if uploaded_file:
 st.sidebar.title(translate('sidebar_title'))
 st.sidebar.info(translate('sidebar_info'))
 st.sidebar.write(translate('file_structure_info'))
+
+st.markdown("""
+    <style>
+    .reportview-container {
+        background: #f0f2f6;
+    }
+    .sidebar .sidebar-content {
+        background: #e0e2e6;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+   
+
 
 
 
