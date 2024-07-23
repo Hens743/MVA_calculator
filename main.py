@@ -316,7 +316,6 @@
 #     </style>
 #     """, unsafe_allow_html=True)
 
-
 import streamlit as st
 import pandas as pd
 
@@ -530,7 +529,7 @@ if submit_button:
         result = calculate_vat(price, vat_rate, inclusive=False)
         st.success(f"{translate('price_inclusive_label')} {result:.2f}")
 
-# Batch Upload and Processing
+# Container for Upload and Editable DataFrame
 with st.container():
     st.write("### Upload and Edit Data")
     uploaded_file = st.file_uploader("Upload Excel file", type=["xlsx"])
