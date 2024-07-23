@@ -148,15 +148,44 @@ def calculate_vat(price, vat_rate, inclusive=True):
 translations = {
     'title': {'en': "MVA Calculator", 'no': "MVA Kalkulator", 'es': "Calculadora de IVA", 'fr': "Calculateur de TVA"},
     'description': {'en': "Calculate prices with and without VAT.", 'no': "Beregn priser med og uten merverdiavgift (MVA).", 'es': "Calcula precios con y sin IVA.", 'fr': "Calculez les prix avec et sans TVA."},
-    # More translations...
+    'price_type_label': {'en': "Select price type", 'no': "Velg pris type", 'es': "Seleccione tipo de precio", 'fr': "Sélectionnez le type de prix"},
+    'price_label': {'en': "Price", 'no': "Pris", 'es': "Precio", 'fr': "Prix"},
+    'vat_rate_label': {'en': "Select VAT rate", 'no': "Velg MVA-sats", 'es': "Seleccione tasa de IVA", 'fr': "Sélectionnez le taux de TVA"},
+    'calculate_button': {'en': "Calculate", 'no': "Beregn", 'es': "Calcular", 'fr': "Calculer"},
+    'price_exclusive_label': {'en': "Price excluding VAT:", 'no': "Pris ekskludert MVA:", 'es': "Precio sin IVA:", 'fr': "Prix hors TVA :"},
+    'price_inclusive_label': {'en': "Price including VAT:", 'no': "Pris inkludert MVA:", 'es': "Precio con IVA:", 'fr': "Prix incluant TVA :"},
+    'sidebar_title': {'en': "About VAT", 'no': "Om MVA", 'es': "Sobre el IVA", 'fr': "À propos de la TVA"},
+    'sidebar_info': {
+        'en': """
+            Value Added Tax (VAT) is a tax paid on most goods and services sold in Norway.
+            The standard VAT rate is 25%, but there are also reduced rates for certain goods and services.
+        """,
+        'no': """
+            Merverdiavgift (MVA) er en avgift som betales på de fleste varer og tjenester som
+            selges i Norge. Standard MVA-sats er 25%, men det finnes også reduserte satser for
+            visse varer og tjenester.
+        """,
+        'es': """
+            El Impuesto al Valor Agregado (IVA) es un impuesto que se paga sobre la mayoría de los bienes y servicios vendidos en Noruega.
+            La tasa de IVA estándar es del 25%, pero también hay tasas reducidas para ciertos bienes y servicios.
+        """,
+        'fr': """
+            La Taxe sur la Valeur Ajoutée (TVA) est une taxe payée sur la plupart des biens et services vendus en Norvège.
+            Le taux de TVA standard est de 25%, mais il existe également des taux réduits pour certains biens et services.
+        """
+    }
 }
 
 # Language selection
 lang = st.sidebar.selectbox("Select language", ("English", "Norsk", "Español", "Français"))
 lang_code = {'English': 'en', 'Norsk': 'no', 'Español': 'es', 'Français': 'fr'}[lang]
-def translate(text_id): return translations[text_id][lang_code]
 
-# User Interface
+def translate(text_id):
+    try:
+        return translations[text_id][lang_code]
+    except KeyError:
+        return translations[text_id]['en']  # Fallback to English if translation is missing
+
 st.title(translate('title'))
 st.write(translate('description'))
 
@@ -195,4 +224,16 @@ if submit_button:
 # Sidebar Information
 st.sidebar.title(translate('sidebar_title'))
 st.sidebar.info(translate('sidebar_info'))
+
+st.markdown("""
+    <style>
+    .reportview-container {
+        background: #f0f2f6;
+    }
+    .sidebar .sidebar-content {
+        background: #e0e2e6;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 
