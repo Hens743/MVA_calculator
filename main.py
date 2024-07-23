@@ -266,10 +266,10 @@ with st.form(key='mva_calculator'):
 if submit_button:
     if price_type == translate('price_inclusive_label'):
         result = calculate_vat(price, vat_rate, inclusive=True)
-        st.success(f"{translate('price_exclusive_label')} {result:.2f} NOK")
+        st.success(f"{translate('price_exclusive_label')} {result:.2f}")
     else:
         result = calculate_vat(price, vat_rate, inclusive=False)
-        st.success(f"{translate('price_inclusive_label')} {result:.2f} NOK")
+        st.success(f"{translate('price_inclusive_label')} {result:.2f}")
 
 # Batch Upload and Processing
 uploaded_file = st.file_uploader("Upload Excel file", type=["xlsx"])
